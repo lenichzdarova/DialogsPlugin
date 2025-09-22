@@ -17,7 +17,7 @@ public:
 
 
 private:
-	TSharedPtr<FSlateStyleSet> StyleSet;
+	TSharedPtr<FSlateStyleSet> StyleSet = nullptr;
 
 private:
 	template <class T>

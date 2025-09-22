@@ -4,7 +4,7 @@
 #include "PropertyEditorModule.h"
 
 DialogTreeDefaultTabFactory::DialogTreeDefaultTabFactory(TSharedPtr<DialogTreeEditorApp> InApp) :
-	FWorkflowTabFactory(FName("DialogGraph"), InApp)
+	FWorkflowTabFactory(FName("DialogTreeGraphTab"), InApp)
 {
 	App = InApp;
 	TabLabel = FText::FromString(TEXT("DialogGraph"));
@@ -14,28 +14,13 @@ DialogTreeDefaultTabFactory::DialogTreeDefaultTabFactory(TSharedPtr<DialogTreeEd
 
 TSharedRef<SWidget> DialogTreeDefaultTabFactory::CreateTabBody(const FWorkflowTabSpawnInfo& Info) const
 {
-	TSharedPtr<DialogTreeEditorApp> EditorApp = App.Pin();
-	FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
-
-	FDetailsViewArgs DetailsViewArgs;
-	DetailsViewArgs.bAllowSearch = false;
-	DetailsViewArgs.bHideSelectionTip = true;
-	DetailsViewArgs.bLockable = false;
-	DetailsViewArgs.bSearchInitialKeyFocus = true;
-	DetailsViewArgs.bUpdatesFromSelection = false;
-	DetailsViewArgs.NotifyHook = nullptr;
-	DetailsViewArgs.bShowOptions = true;
-	DetailsViewArgs.bShowModifiedPropertiesOption = false;
-	DetailsViewArgs.bShowScrollBar = false;
-
-	TSharedPtr<IDetailsView> DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
-	DetailsView->SetObject(EditorApp->ActiveAsset());
+	TSharedPtr<DialogTreeEditorApp> EditorApp = App.Pin();	
 
 	auto Widget = SNew(SVerticalBox);
 	auto Slot = Widget->AddSlot();
 	Slot.FillHeight(1.0f);
 	Slot.HAlign(HAlign_Fill);
-	Slot.AttachWidget(DetailsView.ToSharedRef());
+	//Slot.AttachWidget(SNew(STextBlock).Text(EditorApp->ActiveAsset()->GetName()));
 	return Widget;
 }
 

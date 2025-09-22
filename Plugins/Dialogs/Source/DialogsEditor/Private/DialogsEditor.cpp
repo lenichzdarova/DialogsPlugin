@@ -4,6 +4,8 @@
 #include "DialogTreeAssetAction.h"
 #include "IAssetTools.h"
 #include "AssetToolsModule.h"
+#include "Interfaces/IPluginManager.h"
+#include "Styling/SlateStyleRegistry.h"
 
 #define LOCTEXT_NAMESPACE "FDialogsModule"
 
@@ -13,13 +15,26 @@ void FDialogsEditorModule::StartupModule()
 	IAssetTools& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
 	AssetTypeCategory =
 		AssetToolsModule.RegisterAdvancedAssetCategory(FName(FName("Dialogs")), FText::FromString("Dialogs"));
-	InternalRegisterTypeAction<DialogTreeAssetAction>("Dialog Asset");	
-}
+	InternalRegisterTypeAction<DialogTreeAssetAction>("Dialog Asset");
+
+	StyleSet = MakeShareable(new FSlateStyleSet(TEXT("DialogTreeEditorStyle")));
+	TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("Dialogs");
+	FString ContentDir = Plugin->GetBaseDir().Append(TEXT("/Resources"));
+	StyleSet->SetContentRoot(ContentDir);
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *ContentDir);
+	FSlateImageBrush* ThumbnailBrush = new FSlateImageBrush(StyleSet->RootToContentDir
+		(TEXT("DialogTreeAssetIcon"), TEXT(".png")), FVector2D(128, 128));
+
+	StyleSet->Set("ClassThumbnail.DialogTree", ThumbnailBrush);
+	StyleSet->Set("ClassIcon.DialogTree", ThumbnailBrush);
+	FSlateStyleRegistry::RegisterSlateStyle(*StyleSet);
+	}
 
 void FDialogsEditorModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
+	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleSet);
 	const FAssetToolsModule* AssetToolsModulePtr = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools");
 	if (AssetToolsModulePtr)
 	{
@@ -28,7 +43,7 @@ void FDialogsEditorModule::ShutdownModule()
 		{
 			AssetTools.UnregisterAssetTypeActions(Action);
 		}
-	}
+	}	
 }
 
 #undef LOCTEXT_NAMESPACE
