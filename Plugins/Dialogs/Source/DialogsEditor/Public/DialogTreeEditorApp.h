@@ -12,6 +12,8 @@ public:
 		UObject* InUObject);
 
 	class UDialogTree* ActiveAsset() const {return ActiveDialogTree;}
+	UEdGraph* GetActiveGraph() const {return ActiveGrapth;}
+	void SetActiveGraph(UEdGraph* InActiveGraph) {ActiveGrapth = InActiveGraph;;}
 	
 public: //FAssetEditorToolkitInterface
 	virtual FName GetToolkitFName() const override {return FName(TEXT("DialogTreeEditorApp"));}
@@ -23,6 +25,9 @@ public: //FAssetEditorToolkitInterface
 	virtual void OnToolkitHostingStarted(const TSharedRef<IToolkit>& Toolkit) override {};
 	virtual void OnToolkitHostingFinished(const TSharedRef<IToolkit>& Toolkit) override {};
 
-	private:	
-	UDialogTree* ActiveDialogTree = nullptr;	
+	private:
+	UPROPERTY()
+	UDialogTree* ActiveDialogTree = nullptr;
+	UPROPERTY()
+	UEdGraph* ActiveGrapth = nullptr;
 };

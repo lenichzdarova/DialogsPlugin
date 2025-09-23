@@ -1,6 +1,8 @@
 ﻿#include "DialogTreeDefaultTabFactory.h"
 #include "DialogTreeEditorApp.h"
-#include "DialogTree.h"
+#include "GraphEditor.h"
+#include "Editor/UnrealEd/Public/Kismet2/BlueprintEditorUtils.h"
+#include "Kismet2/KismetEditorUtilities.h"
 #include "PropertyEditorModule.h"
 
 DialogTreeDefaultTabFactory::DialogTreeDefaultTabFactory(TSharedPtr<DialogTreeEditorApp> InApp) :
@@ -20,7 +22,10 @@ TSharedRef<SWidget> DialogTreeDefaultTabFactory::CreateTabBody(const FWorkflowTa
 	auto Slot = Widget->AddSlot();
 	Slot.FillHeight(1.0f);
 	Slot.HAlign(HAlign_Fill);
-	//Slot.AttachWidget(SNew(STextBlock).Text(EditorApp->ActiveAsset()->GetName()));
+	TSharedRef<SGraphEditor> Graph = SNew(SGraphEditor).
+		IsEditable(true).GraphToEdit(EditorApp->GetActiveGraph());
+		
+	Slot.AttachWidget(Graph);
 	return Widget;
 }
 
