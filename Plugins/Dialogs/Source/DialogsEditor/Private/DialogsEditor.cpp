@@ -6,6 +6,9 @@
 #include "AssetToolsModule.h"
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
+#include "EdGraphUtilities.h"
+#include "KismetPins/SGraphPinColor.h"
+#include "EdGraph/EdGraphPin.h"
 
 #define LOCTEXT_NAMESPACE "FDialogsModule"
 
@@ -17,6 +20,7 @@ void FDialogsEditorModule::StartupModule()
 		AssetToolsModule.RegisterAdvancedAssetCategory(FName(FName("Dialogs")), FText::FromString("Dialogs"));
 	InternalRegisterTypeAction<DialogTreeAssetAction>("Dialog Asset");
 
+	// иконки
 	StyleSet = MakeShareable(new FSlateStyleSet(TEXT("DialogTreeEditorStyle")));
 	TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("Dialogs");
 	FString ContentDir = Plugin->GetBaseDir().Append(TEXT("/Resources"));
@@ -37,12 +41,16 @@ void FDialogsEditorModule::StartupModule()
 	StyleSet->Set("DialogTreeEditor.NodeDeletePinIcon", NodeDeletePinIcon);
 	StyleSet->Set("DialogTreeEditor.NodeDeleteNodeIcon", NodeDeleteNodeIcon);
 	FSlateStyleRegistry::RegisterSlateStyle(*StyleSet);
-	}
+
+	PinFactory = MakeShareable(new FDialogNodePinFactory());
+	FEdGraphUtilities::RegisterVisualPinFactory(PinFactory);
+}
 
 void FDialogsEditorModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
+	FEdGraphUtilities::UnregisterVisualPinFactory(PinFactory);
 	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleSet);
 	const FAssetToolsModule* AssetToolsModulePtr = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools");
 	if (AssetToolsModulePtr)

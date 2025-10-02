@@ -11,9 +11,9 @@ public:
 	void InitEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost> InToolkitHost,
 		UObject* InUObject);
 
-	class UDialogTree* ActiveAsset() const {return ActiveDialogTree;}
-	UEdGraph* GetActiveGraph() const {return ActiveGrapth;}
-	void SetActiveGraph(UEdGraph* InActiveGraph) {ActiveGrapth = InActiveGraph;;}
+	class UDialogTree* ActiveAsset() const {return OpenedAsset;}
+	UEdGraph* GetActiveGraph() const {return Graph;}
+	void SetActiveGraph(UEdGraph* InActiveGraph) {Graph = InActiveGraph;;}
 	
 public: //FAssetEditorToolkitInterface
 	virtual FName GetToolkitFName() const override {return FName(TEXT("DialogTreeEditorApp"));}
@@ -25,9 +25,19 @@ public: //FAssetEditorToolkitInterface
 	virtual void OnToolkitHostingStarted(const TSharedRef<IToolkit>& Toolkit) override {};
 	virtual void OnToolkitHostingFinished(const TSharedRef<IToolkit>& Toolkit) override {};
 
+	virtual void OnClose() override;
+	void ObGraphChanged(const FEdGraphEditAction& EditAction);
+	
+
+protected:
+	void UpdateGraphFromAsset();
+	void UpdateAssetFromGraph();
+
 	private:
 	UPROPERTY()
-	UDialogTree* ActiveDialogTree = nullptr;
+	UDialogTree* OpenedAsset = nullptr;
 	UPROPERTY()
-	UEdGraph* ActiveGrapth = nullptr;
+	UEdGraph* Graph = nullptr;
+
+	FDelegateHandle OnGraphChanged;
 };

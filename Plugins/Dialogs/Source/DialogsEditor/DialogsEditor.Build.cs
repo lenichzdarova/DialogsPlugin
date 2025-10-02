@@ -43,7 +43,8 @@ public class DialogsEditor : ModuleRules
 				"DialogsRuntime",
 				"PropertyEditor",
 				"Projects",
-				"ToolMenus"
+				"ToolMenus",
+				"GraphEditor"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

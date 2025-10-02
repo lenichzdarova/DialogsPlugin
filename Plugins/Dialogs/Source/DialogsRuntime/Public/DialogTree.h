@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DialogRuntimePin.h"
 #include "DialogTree.generated.h"
 
 /**
@@ -13,7 +14,7 @@ class DIALOGSRUNTIME_API UDialogTree : public UObject
 {
 	GENERATED_BODY()
 	
-public:
-	UPROPERTY(EditAnywhere)
-	bool TestVar;
+public:	
+	UPROPERTY()
+	UDialogRuntimeGraph* Graph = nullptr;
 };

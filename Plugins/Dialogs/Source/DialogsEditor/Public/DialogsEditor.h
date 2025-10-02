@@ -4,6 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 #include "AssetTypeActions_Base.h"
+#include "DialogNodeGraphPin.h"
 #include "Styling/SlateStyle.h"
 
 class FDialogsEditorModule : public IModuleInterface
@@ -18,6 +19,7 @@ public:
 
 private:
 	TSharedPtr<FSlateStyleSet> StyleSet = nullptr;
+	TSharedPtr<FDialogNodePinFactory> PinFactory = nullptr;
 
 private:
 	template <class T>
