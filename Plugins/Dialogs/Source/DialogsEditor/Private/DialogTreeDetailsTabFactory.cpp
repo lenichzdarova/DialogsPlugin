@@ -1,6 +1,6 @@
 ﻿#include "DialogTreeDetailsTabFactory.h"
 #include "DialogTreeEditorApp.h"
-#include "DialogTree.h"
+#include "DialogTreeAsset.h"
 #include "PropertyEditorModule.h"
 
 DialogTreeDetailsTabFactory::DialogTreeDetailsTabFactory(TSharedPtr<DialogTreeEditorApp> InApp) :
@@ -15,7 +15,7 @@ DialogTreeDetailsTabFactory::DialogTreeDetailsTabFactory(TSharedPtr<DialogTreeEd
 TSharedRef<SWidget> DialogTreeDetailsTabFactory::CreateTabBody(const FWorkflowTabSpawnInfo& Info) const
 {
 	TSharedPtr<DialogTreeEditorApp> EditorApp = App.Pin();
-	FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
+	FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));	
 
 	FDetailsViewArgs DetailsViewArgs;
 	DetailsViewArgs.bAllowSearch = false;
@@ -31,11 +31,20 @@ TSharedRef<SWidget> DialogTreeDetailsTabFactory::CreateTabBody(const FWorkflowTa
 	TSharedPtr<IDetailsView> DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
 	DetailsView->SetObject(EditorApp->ActiveAsset());
 
+	TSharedPtr<IDetailsView> SelectedNodeDetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
+	SelectedNodeDetailsView->SetObject(nullptr);
+	EditorApp->SetSelectedNodeDetailView(SelectedNodeDetailsView);
+
 	auto Widget = SNew(SVerticalBox);
-	auto Slot = Widget->AddSlot();
-	Slot.FillHeight(1.0f);
-	Slot.HAlign(HAlign_Fill);
-	Slot.AttachWidget(DetailsView.ToSharedRef());
+	auto SlotDetailsView = Widget->AddSlot();
+	SlotDetailsView.FillHeight(1.0f);
+	SlotDetailsView.HAlign(HAlign_Fill);
+	SlotDetailsView.AttachWidget(DetailsView.ToSharedRef());
+
+	auto SlotSelectedNodeDetailsView = Widget->AddSlot();
+	SlotSelectedNodeDetailsView.FillHeight(1.0f);
+	SlotSelectedNodeDetailsView.HAlign(HAlign_Fill);
+	SlotSelectedNodeDetailsView.AttachWidget(SelectedNodeDetailsView.ToSharedRef());
 	return Widget;
 }
 

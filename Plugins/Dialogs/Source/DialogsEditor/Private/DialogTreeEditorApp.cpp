@@ -2,7 +2,7 @@
 
 #include "DialogNode.h"
 #include "DialogTreeEditorMode.h"
-#include "DialogsRuntime/Public/DialogTree.h"
+#include "DialogsRuntime/Public/DialogTreeAsset.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "DialogTreeGraphSchema.h"
 
@@ -17,7 +17,7 @@ void DialogTreeEditorApp::InitEditor(const EToolkitMode::Type Mode, const TShare
 	TArray<UObject*> ObjectToEdit;
 	
 	ObjectToEdit.Add(InUObject);
-	OpenedAsset = Cast<UDialogTree>(InUObject);
+	OpenedAsset = Cast<UDialogTreeAsset>(InUObject);
 	Graph = FBlueprintEditorUtils::CreateNewGraph(OpenedAsset, NAME_None, UEdGraph::StaticClass(), UDialogTreeGraphSchema::StaticClass());
 	InitAssetEditor(Mode, InToolkitHost, TEXT("DialogTreeEditorApp"), FTabManager::FLayout::NullLayout,
 		true, true, ObjectToEdit);
@@ -28,11 +28,39 @@ void DialogTreeEditorApp::InitEditor(const EToolkitMode::Type Mode, const TShare
 	OnGraphChanged = Graph->AddOnGraphChangedHandler( FOnGraphChanged::FDelegate::CreateSP(this, &DialogTreeEditorApp::ObGraphChanged));
 }
 
+void DialogTreeEditorApp::SetSelectedNodeDetailView(TSharedPtr<IDetailsView> InDetailsView)
+{
+	SelectedNodeDetailView = InDetailsView;
+	SelectedNodeDetailView->OnFinishedChangingProperties().AddRaw(this,&DialogTreeEditorApp::OnNodeDetailViewPropertiesUpdated);
+}
+
+void DialogTreeEditorApp::OnGrapthSelectionChanged(const FGraphPanelSelectionSet& InSelection)
+{
+	//find first dialog node
+	for (auto Object : InSelection)
+	{
+		if (UDialogNode* Node = Cast<UDialogNode>(Object))
+		{
+			SelectedNodeDetailView->SetObject(Node->GetDialogNodeInfo());
+			return;
+		}
+	}
+	SelectedNodeDetailView->SetObject(nullptr);
+}
+
 void DialogTreeEditorApp::OnClose()
 {
 	UpdateAssetFromGraph();
 	Graph->RemoveOnGraphChangedHandler(OnGraphChanged);
 	FAssetEditorToolkit::OnClose();
+}
+
+void DialogTreeEditorApp::OnNodeDetailViewPropertiesUpdated(const FPropertyChangedEvent& Event)
+{
+	if (ActiveGraphUI)
+	{
+		ActiveGraphUI->NotifyGraphChanged();
+	}
 }
 
 void DialogTreeEditorApp::ObGraphChanged(const FEdGraphEditAction& EditAction)
@@ -57,6 +85,15 @@ void DialogTreeEditorApp::UpdateGraphFromAsset()
 		NewNode->CreateNewGuid();
 		NewNode->NodePosX = SourceNode->Location.X;
 		NewNode->NodePosY = SourceNode->Location.Y;
+
+		if (SourceNode->NodeInfo)
+		{
+			NewNode->SetDialogNodeInfo(DuplicateObject(SourceNode->NodeInfo, SourceNode));
+		}
+		else
+		{
+			NewNode->SetDialogNodeInfo(NewObject<UDialogNodeInfo>(SourceNode));
+		}
 
 		if (SourceNode->InputPin)
 		{
@@ -106,8 +143,13 @@ void DialogTreeEditorApp::UpdateAssetFromGraph()
 	TMap<FGuid, UDialogRuntimePin*> Pins;
 	for (UEdGraphNode* Node : Graph->Nodes)
 	{
+
+		UDialogNode* GraphNode = Cast<UDialogNode>(Node);
+		if (!GraphNode) continue;
+		
 		UDialogRuntimeNode* RuntimeNode = NewObject<UDialogRuntimeNode>(RuntimeGraph);
 		RuntimeNode->Location = FVector2D(Node->NodePosX, Node->NodePosY);
+		RuntimeNode->NodeInfo = GraphNode->GetDialogNodeInfo();
 
 		for (UEdGraphPin* Pin : Node->Pins)
 		{

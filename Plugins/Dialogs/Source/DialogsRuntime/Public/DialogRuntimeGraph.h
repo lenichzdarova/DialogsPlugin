@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DialogNodeInfo.h"
 #include "UObject/Object.h"
-#include "DialogRuntimePin.generated.h"
+#include "DialogRuntimeGraph.generated.h"
 
 /**
  * 
@@ -40,7 +41,7 @@ public:
 
 	//непосредственно диалоговые данные ноды
 	UPROPERTY()
-	UObject* NodeData = nullptr;
+	UDialogNodeInfo* NodeInfo = nullptr;
 };
 
 UCLASS()

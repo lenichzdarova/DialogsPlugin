@@ -16,16 +16,22 @@ DialogTreeDefaultTabFactory::DialogTreeDefaultTabFactory(TSharedPtr<DialogTreeEd
 
 TSharedRef<SWidget> DialogTreeDefaultTabFactory::CreateTabBody(const FWorkflowTabSpawnInfo& Info) const
 {
-	TSharedPtr<DialogTreeEditorApp> EditorApp = App.Pin();	
+	TSharedPtr<DialogTreeEditorApp> EditorApp = App.Pin();
+
+	SGraphEditor::FGraphEditorEvents GraphEvents;
+	GraphEvents.OnSelectionChanged.BindRaw(EditorApp.Get(), &DialogTreeEditorApp::OnGrapthSelectionChanged);
+	
+	TSharedPtr<SGraphEditor> GraphEditor = SNew(SGraphEditor)
+		.IsEditable(true)
+		.GraphEvents(GraphEvents)
+		.GraphToEdit(EditorApp->GetActiveGraph());
+	EditorApp->SetActiveGraphUI(GraphEditor);
 
 	auto Widget = SNew(SVerticalBox);
 	auto Slot = Widget->AddSlot();
 	Slot.FillHeight(1.0f);
-	Slot.HAlign(HAlign_Fill);
-	TSharedRef<SGraphEditor> Graph = SNew(SGraphEditor).
-		IsEditable(true).GraphToEdit(EditorApp->GetActiveGraph());
-		
-	Slot.AttachWidget(Graph);
+	Slot.HAlign(HAlign_Fill);		
+	Slot.AttachWidget(GraphEditor.ToSharedRef());
 	return Widget;
 }
 

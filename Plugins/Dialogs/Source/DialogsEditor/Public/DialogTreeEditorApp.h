@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
-#include "DialogTree.h"
+#include "DialogTreeAsset.h"
 #include "WorkflowOrientedApp/WorkflowCentricApplication.h"
 
 class DialogTreeEditorApp : public FWorkflowCentricApplication,
@@ -11,9 +11,15 @@ public:
 	void InitEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost> InToolkitHost,
 		UObject* InUObject);
 
-	class UDialogTree* ActiveAsset() const {return OpenedAsset;}
+	class UDialogTreeAsset* ActiveAsset() const {return OpenedAsset;}
 	UEdGraph* GetActiveGraph() const {return Graph;}
-	void SetActiveGraph(UEdGraph* InActiveGraph) {Graph = InActiveGraph;;}
+	void SetActiveGraph(UEdGraph* InActiveGraph) {Graph = InActiveGraph;}
+
+	void SetActiveGraphUI(TSharedPtr<SGraphEditor> InGraph) { ActiveGraphUI = InGraph; }
+	void SetSelectedNodeDetailView(TSharedPtr<IDetailsView> InDetailsView);
+	void OnGrapthSelectionChanged(const FGraphPanelSelectionSet& InSelection);
+
+	
 	
 public: //FAssetEditorToolkitInterface
 	virtual FName GetToolkitFName() const override {return FName(TEXT("DialogTreeEditorApp"));}
@@ -26,6 +32,7 @@ public: //FAssetEditorToolkitInterface
 	virtual void OnToolkitHostingFinished(const TSharedRef<IToolkit>& Toolkit) override {};
 
 	virtual void OnClose() override;
+	void OnNodeDetailViewPropertiesUpdated(const FPropertyChangedEvent& Event);
 	void ObGraphChanged(const FEdGraphEditAction& EditAction);
 	
 
@@ -35,9 +42,12 @@ protected:
 
 	private:
 	UPROPERTY()
-	UDialogTree* OpenedAsset = nullptr;
+	UDialogTreeAsset* OpenedAsset = nullptr;
 	UPROPERTY()
-	UEdGraph* Graph = nullptr;
+	UEdGraph* Graph = nullptr;	
 
 	FDelegateHandle OnGraphChanged;
+	//graph view
+	TSharedPtr<SGraphEditor> ActiveGraphUI = nullptr;
+	TSharedPtr<IDetailsView> SelectedNodeDetailView = nullptr;
 };

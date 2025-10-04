@@ -5,6 +5,11 @@
 #include "Framework/Commands/UIAction.h"
 #include "ToolMenu.h"
 
+FText UDialogNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
+{
+	return DialogNodeInfo->Title;
+}
+
 void UDialogNode::GetNodeContextMenuActions(class UToolMenu* Menu, class UGraphNodeContextMenuContext* Context) const
 {
 	FToolMenuSection& Section = Menu->AddSection(TEXT("SectionName"), FText::FromString(TEXT("Dialog node actions")));

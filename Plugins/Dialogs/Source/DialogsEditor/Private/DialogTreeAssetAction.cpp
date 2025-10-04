@@ -1,5 +1,5 @@
 ﻿#include "DialogTreeAssetAction.h"
-#include "DialogTree.h"
+#include "DialogTreeAsset.h"
 #include "DialogTreeEditorApp.h"
 
 DialogTreeAssetAction::DialogTreeAssetAction(EAssetTypeCategories::Type InCategory)
@@ -16,14 +16,14 @@ FColor DialogTreeAssetAction::GetTypeColor() const
 }
 UClass* DialogTreeAssetAction::GetSupportedClass() const
 {
-	return UDialogTree::StaticClass();
+	return UDialogTreeAsset::StaticClass();
 }
 void DialogTreeAssetAction::OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<IToolkitHost> EditWithinLevelEditor)
 {
 	EToolkitMode::Type Mode = EditWithinLevelEditor.IsValid()? EToolkitMode::WorldCentric: EToolkitMode::Standalone;
 	for (UObject* Object : InObjects)
 	{
-		if (UDialogTree* DialogAsset = Cast<UDialogTree>(Object))
+		if (UDialogTreeAsset* DialogAsset = Cast<UDialogTreeAsset>(Object))
 		{
 			TSharedPtr<DialogTreeEditorApp> Editor(new DialogTreeEditorApp);
 			Editor->InitEditor(Mode, EditWithinLevelEditor, DialogAsset);

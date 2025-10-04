@@ -35,7 +35,9 @@ UEdGraphNode* FDialogTreeNodeAction::PerformAction(class UEdGraph* ParentGraph, 
 	UDialogNode* Result = NewObject<UDialogNode>(ParentGraph);
 	Result->CreateNewGuid();
 	Result->NodePosX = Location.X;
-	Result->NodePosY = Location.Y;	
+	Result->NodePosY = Location.Y;
+	Result->SetDialogNodeInfo(NewObject<UDialogNodeInfo>(Result));
+	
 	UEdGraphPin* InputPin = Result->CreateDialogNodePin(EGPD_Input, TEXT("Input"));
 	Result->CreateDialogNodePin(EGPD_Output, TEXT("Output"));
 

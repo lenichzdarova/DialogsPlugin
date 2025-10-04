@@ -3,18 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DialogRuntimePin.h"
-#include "DialogTree.generated.h"
+#include "DialogRuntimeGraph.h"
+#include "DialogTreeAsset.generated.h"
 
 /**
  * 
  */
 UCLASS(BlueprintType)
-class DIALOGSRUNTIME_API UDialogTree : public UObject
+class DIALOGSRUNTIME_API UDialogTreeAsset : public UObject
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+
+	UPROPERTY(EditAnywhere)
+	FString Title = TEXT("Enter graph name here");
 	UPROPERTY()
 	UDialogRuntimeGraph* Graph = nullptr;
 };

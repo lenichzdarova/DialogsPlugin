@@ -36,8 +36,8 @@ void FDialogsEditorModule::StartupModule()
 	FSlateImageBrush* NodeDeleteNodeIcon = new FSlateImageBrush(StyleSet->RootToContentDir
 		(TEXT("NodeDeleteNodeIcon"), TEXT(".png")), FVector2D(128, 128));
 
-	StyleSet->Set("ClassThumbnail.DialogTree", ThumbnailBrush);
-	StyleSet->Set("ClassIcon.DialogTree", AssetIconBrush);
+	StyleSet->Set("ClassThumbnail.DialogTreeAsset", ThumbnailBrush);
+	StyleSet->Set("ClassIcon.DialogTreeAsset", AssetIconBrush);
 	StyleSet->Set("DialogTreeEditor.NodeAddPinIcon", NodeAddPinIcon);
 	StyleSet->Set("DialogTreeEditor.NodeDeletePinIcon", NodeDeletePinIcon);
 	StyleSet->Set("DialogTreeEditor.NodeDeleteNodeIcon", NodeDeleteNodeIcon);
