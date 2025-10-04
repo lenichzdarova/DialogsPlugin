@@ -27,19 +27,19 @@ TSharedRef<SWidget> DialogTreeDetailsTabFactory::CreateTabBody(const FWorkflowTa
 	DetailsViewArgs.bShowOptions = true;
 	DetailsViewArgs.bShowModifiedPropertiesOption = false;
 	DetailsViewArgs.bShowScrollBar = false;
-
+/*
 	TSharedPtr<IDetailsView> DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
-	DetailsView->SetObject(EditorApp->ActiveAsset());
+	DetailsView->SetObject(EditorApp->ActiveAsset());*/
 
 	TSharedPtr<IDetailsView> SelectedNodeDetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
 	SelectedNodeDetailsView->SetObject(nullptr);
 	EditorApp->SetSelectedNodeDetailView(SelectedNodeDetailsView);
 
 	auto Widget = SNew(SVerticalBox);
-	auto SlotDetailsView = Widget->AddSlot();
+	/*auto SlotDetailsView = Widget->AddSlot();
 	SlotDetailsView.FillHeight(1.0f);
 	SlotDetailsView.HAlign(HAlign_Fill);
-	SlotDetailsView.AttachWidget(DetailsView.ToSharedRef());
+	SlotDetailsView.AttachWidget(DetailsView.ToSharedRef());*/
 
 	auto SlotSelectedNodeDetailsView = Widget->AddSlot();
 	SlotSelectedNodeDetailsView.FillHeight(1.0f);

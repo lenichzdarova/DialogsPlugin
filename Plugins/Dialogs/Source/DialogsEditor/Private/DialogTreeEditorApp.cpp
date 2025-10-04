@@ -45,7 +45,7 @@ void DialogTreeEditorApp::OnGrapthSelectionChanged(const FGraphPanelSelectionSet
 			return;
 		}
 	}
-	SelectedNodeDetailView->SetObject(nullptr);
+	SelectedNodeDetailView->SetObject(OpenedAsset);
 }
 
 void DialogTreeEditorApp::OnClose()
