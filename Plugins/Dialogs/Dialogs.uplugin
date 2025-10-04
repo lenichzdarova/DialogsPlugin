@@ -15,15 +15,15 @@
 	"IsExperimentalVersion": false,
 	"Installed": false,
 	"Modules": [
-		{
-			"Name": "DialogsRuntime",
-			"Type": "Runtime", 
-			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "DialogsEditor",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
-		}
+      {
+        "Name": "DialogsEditor",
+        "Type": "Editor",
+        "LoadingPhase": "Default"
+      },
+      {
+        "Name": "DialogsRuntime",
+        "Type": "Runtime", 
+        "LoadingPhase": "Default"
+      }		
 	]
 }

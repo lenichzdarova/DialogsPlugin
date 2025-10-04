@@ -39,12 +39,12 @@ public class DialogsEditor : ModuleRules
 				"Slate",
 				"SlateCore",
 				"AssetTools",
-				"UnrealEd",
-				"DialogsRuntime",
+				"UnrealEd",				
 				"PropertyEditor",
 				"Projects",
 				"ToolMenus",
-				"GraphEditor"
+				"GraphEditor",
+				"DialogsRuntime"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

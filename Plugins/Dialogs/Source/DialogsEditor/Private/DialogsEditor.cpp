@@ -7,7 +7,6 @@
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "EdGraphUtilities.h"
-#include "KismetPins/SGraphPinColor.h"
 #include "EdGraph/EdGraphPin.h"
 
 #define LOCTEXT_NAMESPACE "FDialogsModule"
@@ -25,8 +24,10 @@ void FDialogsEditorModule::StartupModule()
 	TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("Dialogs");
 	FString ContentDir = Plugin->GetBaseDir().Append(TEXT("/Resources"));
 	StyleSet->SetContentRoot(ContentDir);
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *ContentDir);
+	
 	FSlateImageBrush* ThumbnailBrush = new FSlateImageBrush(StyleSet->RootToContentDir
+		(TEXT("DialogTreeAssetIcon"), TEXT(".png")), FVector2D(128, 128));
+	FSlateImageBrush* AssetIconBrush = new FSlateImageBrush(StyleSet->RootToContentDir
 		(TEXT("DialogTreeAssetIcon"), TEXT(".png")), FVector2D(128, 128));
 	FSlateImageBrush* NodeAddPinIcon = new FSlateImageBrush(StyleSet->RootToContentDir
 		(TEXT("NodeAddPinIcon"), TEXT(".png")), FVector2D(128, 128));
@@ -36,7 +37,7 @@ void FDialogsEditorModule::StartupModule()
 		(TEXT("NodeDeleteNodeIcon"), TEXT(".png")), FVector2D(128, 128));
 
 	StyleSet->Set("ClassThumbnail.DialogTree", ThumbnailBrush);
-	StyleSet->Set("ClassIcon.DialogTree", ThumbnailBrush);
+	StyleSet->Set("ClassIcon.DialogTree", AssetIconBrush);
 	StyleSet->Set("DialogTreeEditor.NodeAddPinIcon", NodeAddPinIcon);
 	StyleSet->Set("DialogTreeEditor.NodeDeletePinIcon", NodeDeletePinIcon);
 	StyleSet->Set("DialogTreeEditor.NodeDeleteNodeIcon", NodeDeleteNodeIcon);
@@ -49,18 +50,23 @@ void FDialogsEditorModule::StartupModule()
 void FDialogsEditorModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
-	FEdGraphUtilities::UnregisterVisualPinFactory(PinFactory);
-	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleSet);
-	const FAssetToolsModule* AssetToolsModulePtr = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools");
-	if (AssetToolsModulePtr)
+	// we call this function before unloading the module.	
+	
+	if (const FAssetToolsModule* AssetToolsModulePtr = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools"))
 	{
 		IAssetTools& AssetTools = AssetToolsModulePtr->Get();
 		for (const auto& Action : Actions)
 		{
 			AssetTools.UnregisterAssetTypeActions(Action);
 		}
-	}	
+	}
+	Actions.Empty();
+
+	FEdGraphUtilities::UnregisterVisualPinFactory(PinFactory);
+	PinFactory.Reset();
+	PinFactory = nullptr;
+	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleSet);
+	StyleSet.Reset();
 }
 
 #undef LOCTEXT_NAMESPACE
